@@ -24,7 +24,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);overflo
 #world{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:block}
 main{position:relative;z-index:1}
 .sec{position:relative;min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:12vh max(16px,6vw);box-sizing:border-box;overflow:hidden}
-.inner{width:100%;max-width:1180px;min-width:0;position:relative;z-index:2;transform:scale(var(--fit,1))}
+.inner{width:100%;max-width:1180px;min-width:0;position:relative;z-index:2;transform:scale(var(--fit,1));transform-origin:top center}
+/* words of a screen that is not current stay hidden until it becomes current */
+.sec:not(.on) .inner{visibility:hidden}
 .center{text-align:center}
 .ws{place-items:start center;padding-top:15vh}
 .ws .inner{transform-origin:top center}
@@ -69,7 +71,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .disc .pc{cursor:pointer;outline:none}
 .disc .pc path{transition:transform .5s var(--ease),opacity .4s}
 .disc .pc .wg{stroke:#fff;stroke-width:3}
-.disc .pc.open .wg{fill-opacity:.08;stroke:currentColor;stroke-width:2;stroke-dasharray:7 6}
+.disc .pc.open .wg{fill-opacity:.14}
 .disc .pc text{pointer-events:none;fill:#fff;font-family:var(--f)}
 .disc .pc.open text{fill:currentColor}
 .disc .pc .pn{font-size:24px;font-weight:700}
@@ -78,7 +80,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .on .disc .pc{animation:lock 1.4s var(--ease) forwards;animation-delay:calc(var(--i) * .16s + .5s)}
 @keyframes lock{to{opacity:1;transform:none}}
 .on .disc .pc.open .wg{animation:wait 1.8s ease-in-out infinite;animation-delay:2.4s}
-@keyframes wait{50%{fill-opacity:.22}}
+@keyframes wait{50%{fill-opacity:.32}}
 .disc .pc.sel .wg{filter:drop-shadow(0 10px 24px rgba(29,29,31,.25))}
 .disc .pc.dim{opacity:.35!important}
 .disc .pc:focus-visible .wg{stroke:var(--ink);stroke-width:3}
@@ -154,13 +156,27 @@ h1,h2,h3{margin:0;text-wrap:balance}
 @keyframes leaf{0%,42%{left:50%;opacity:0;transform:translateX(-50%) scale(.2) rotate(-30deg)}52%{left:50%;opacity:1;transform:translateX(-50%) scale(1) rotate(0)}64%{left:50%;opacity:1;transform:translateX(-50%) scale(1)}76%{left:83.4%;opacity:1;transform:translateX(-50%) scale(1)}86%,94%{left:83.4%;opacity:1;transform:translateX(-50%) scaleX(.2) scaleY(.85) rotate(-28deg)}100%{left:83.4%;opacity:0;transform:translateX(-50%) scaleX(.2) rotate(-28deg)}}
 
 /* try */
-.try{display:grid;gap:3vh;justify-items:center;text-align:center;transition:opacity 1s}
-.try.playing{opacity:.12}
-.leafform{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:min(620px,100%)}
-.leafform input{flex:1 1 260px;min-width:0;border:0;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px var(--line2);padding:.85em 1.4em;font-family:var(--f);font-weight:700;font-size:clamp(17px,1.6vw,21px);text-align:center;outline:none;color:var(--ink)}
-.leafform input:focus{box-shadow:inset 0 0 0 2px var(--art)}
-.leafform button{background:var(--art);color:#fff;border:0;border-radius:999px;padding:0 1.8em;min-height:56px;font-family:var(--f);font-weight:700;font-size:15px;cursor:pointer}
-.leafform button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.try{display:grid;gap:2.4vh;justify-items:center;text-align:center}
+.tryrow{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:4vw;align-items:center;width:100%;margin-top:2vh;text-align:left}
+.picks{display:grid;gap:10px;align-content:center}
+.pq{font-size:13px;font-weight:700;color:var(--sub);margin:10px 0 0;letter-spacing:.14em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-family:var(--f);font-weight:700;font-size:15px;padding:.75em 1.25em;border-radius:999px;border:0;background:#fff;box-shadow:inset 0 0 0 1px var(--line2);color:var(--ink);cursor:pointer;transition:background .25s,color .25s,box-shadow .25s}
+.chips button[aria-pressed=true]{background:var(--ink);color:#fff;box-shadow:none}
+.chips button:focus-visible{outline:2px solid var(--art);outline-offset:2px}
+.btn.mk{justify-self:start;margin-top:16px;background:var(--art)}
+.btn.mk:disabled{opacity:.5;cursor:default;transform:none}
+.leafsvg{width:100%;height:auto;overflow:visible}
+.leafsvg .branch{fill:none;stroke:#7a6552;stroke-width:6;stroke-linecap:round}
+.leafsvg .branch.thin{stroke-width:3}
+.leafsvg .twig path{fill:#7fcfab}
+.leafsvg .stem{stroke:#7a6552;stroke-width:3;stroke-linecap:round}
+.lfShape{fill:url(#lfGrad)}
+.lfVein{fill:none;stroke:rgba(255,255,255,.3);stroke-width:1.3}
+#lfText text{font-family:var(--f);font-weight:700;font-size:17px;fill:#fff;letter-spacing:.04em}
+#lfText text.to{font-size:14px;fill:rgba(255,255,255,.85)}
+.leafsvg .ground{stroke:var(--line2)}
+#lfNote{font-family:var(--f);font-size:15px;font-weight:700;fill:var(--sub)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 #leafLayer{position:fixed;inset:0;z-index:30;pointer-events:none;overflow:hidden}
 .lc{position:absolute;left:0;top:0;font-weight:900;font-size:clamp(28px,3.4vw,48px);color:var(--art);will-change:transform,opacity}
@@ -213,6 +229,8 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .terms{margin-top:2.4vh;font-size:11px;color:var(--sub);line-height:1.9;display:grid;gap:2px;text-align:left}
 
 /* CTA */
+.ctabox{display:grid;justify-items:center;gap:14px;margin-top:5vh}
+.btn.big{font-size:18px;padding:1.2em 2.6em;background:var(--grad)}
 .consult{width:min(800px,100%);margin:4vh auto 0;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:28px;padding:clamp(22px,2.6vw,34px);display:grid;gap:14px;text-align:left;box-sizing:border-box;box-shadow:0 30px 60px -40px rgba(29,29,31,.35)}
 .consult .q{font-weight:700;font-size:15px;margin:0}
 .roles{display:flex;gap:8px;flex-wrap:wrap}
@@ -251,6 +269,7 @@ body.at0 .rail{opacity:0}
   .sec{height:100vh;height:100svh;min-height:0;scroll-snap-align:start;scroll-snap-stop:always}
 }
 @media (max-width:900px){
+  .tryrow{grid-template-columns:minmax(0,1fr)}
   .pz,.team{grid-template-columns:minmax(0,1fr)}
   .credits{grid-template-columns:repeat(2,minmax(0,1fr))}
   .rail{display:none}
@@ -405,13 +424,47 @@ body.at0 .rail{opacity:0}
   <div class="inner try" id="tryBox">
     <p class="eyebrow f">09</p>
     <h2 class="hl r" style="--d:.1">いま、ここで。</h2>
-    <p class="sub r" style="--d:.2;margin-top:0">誰かに伝えたい一言を入力してください。</p>
-    <form class="leafform r" style="--d:.3" id="leafForm" autocomplete="off">
-      <label for="leafIn" class="sr">伝えたい一言</label>
-      <input id="leafIn" maxlength="20" placeholder="ありがとう、を伝えたい">
-      <button type="submit">葉にする</button>
-    </form>
-    <p class="note f" style="--d:.5">会場では、この一言をAIが詩に編み直し、葉の手紙にしました。ここでは言葉が葉になる瞬間だけを再現しています（AI生成・外部送信なし）。</p>
+    <p class="sub r" style="--d:.2;margin-top:0">言葉を選ぶと、一枚の葉の手紙になります。</p>
+    <div class="tryrow">
+      <div class="picks r" style="--d:.3">
+        <p class="pq">だれに</p>
+        <div class="chips" id="toChips" role="group" aria-label="だれに">
+          <button type="button" aria-pressed="true">家族へ</button><button type="button" aria-pressed="false">友だちへ</button><button type="button" aria-pressed="false">未来の自分へ</button><button type="button" aria-pressed="false">まだ見ぬ誰かへ</button>
+        </div>
+        <p class="pq">どんな気持ち</p>
+        <div class="chips" id="feelChips" role="group" aria-label="どんな気持ち">
+          <button type="button" aria-pressed="true">ありがとう</button><button type="button" aria-pressed="false">がんばれ</button><button type="button" aria-pressed="false">また会おう</button><button type="button" aria-pressed="false">だいじょうぶ</button>
+        </div>
+        <button class="btn mk" id="makeLeaf" type="button">葉の手紙にする</button>
+      </div>
+      <svg class="leafsvg r" style="--d:.4" viewBox="0 0 640 430" role="img" aria-label="選んだ言葉が葉に刻まれ、葉が巻かれて切り落とされ、地面に落ちる">
+        <defs>
+          <linearGradient id="lfGrad" x1="0" y1="-1" x2="0" y2="1"><stop offset="0" stop-color="#2fc28f"/><stop offset=".55" stop-color="#10b07f"/><stop offset="1" stop-color="#0b8d66"/></linearGradient>
+          <linearGradient id="rlGrad" x1="0" y1="-1" x2="0" y2="1"><stop offset="0" stop-color="#36c996"/><stop offset=".5" stop-color="#0f9e72"/><stop offset="1" stop-color="#0a7a58"/></linearGradient>
+        </defs>
+        <path class="branch" d="M-20 58 C 110 44, 220 60, 300 70 S 460 58, 560 26"/>
+        <path class="branch thin" d="M420 62 C 450 80, 470 96, 500 104"/>
+        <g class="twig"><path d="M180 52 C 170 30, 140 20, 118 24 C 130 40, 150 50, 180 52 Z"/><path d="M500 104 C 520 120, 548 124, 566 116 C 548 104, 524 100, 500 104 Z"/><path d="M520 40 C 530 18, 556 8, 578 12 C 566 28, 546 38, 520 40 Z"/></g>
+        <path class="stem" d="M300 70 L304 78"/>
+        <g id="lfAll" style="transform:translate(304px,78px)">
+          <g id="lfFall">
+            <g id="lfBody" style="transform:rotate(7deg)">
+              <path class="lfShape" d="M0 0 C 50 -82, 232 -96, 318 0 C 232 96, 50 82, 0 0 Z"/>
+              <path class="lfVein" d="M4 0 H 310 M56 0 L 92 -40 M56 0 L 92 40 M122 0 L 160 -48 M122 0 L 160 48 M190 0 L 226 -44 M190 0 L 226 44 M250 0 L 278 -28 M250 0 L 278 28"/>
+              <g id="lfText"></g>
+            </g>
+            <g id="lfRoll" style="opacity:0;transform:rotate(7deg)">
+              <rect x="4" y="-16" width="74" height="32" rx="16" fill="url(#rlGrad)"/>
+              <path d="M22 -16 C 12 -6, 12 6, 22 16 M40 -16 C 30 -6, 30 6, 40 16 M58 -16 C 48 -6, 48 6, 58 16" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.4"/>
+            </g>
+          </g>
+          <g id="lfCut" style="opacity:0"><path d="M-10 -10 L10 10 M10 -10 L-10 10" stroke="#1d1d1f" stroke-width="1.6" stroke-linecap="round"/></g>
+        </g>
+        <line class="ground" x1="0" y1="410" x2="640" y2="410"/>
+        <text id="lfNote" x="470" y="396" text-anchor="middle" style="opacity:0">ひろった誰かに、届きますように。</text>
+      </svg>
+    </div>
+    <p class="note f" style="--d:.5">会場では、手書きの一言をAIが詩に編み直し、葉の手紙にしました。ここでは選んだ言葉から短い手紙をつづり、葉が巻かれて落ちるまでを再現しています（AI生成・外部送信なし）。</p>
   </div>
 </section>
 
@@ -458,20 +511,9 @@ body.at0 .rail{opacity:0}
     <p class="eyebrow f">12</p>
     <h2 class="hl r" style="--d:.1">あなたの<span class="grad">ピース</span>で、<br>次の交差点を。</h2>
     <p class="sub r" style="--d:.2">候補の場所、研究テーマ、実施の目的。その一つから、相談を始めましょう。</p>
-    <div class="consult r" style="--d:.35">
-      <p class="q">どのピースを持っていますか？</p>
-      <div class="roles" id="roles">
-        <button type="button" data-r="0" aria-pressed="true"><i style="background:var(--place)"></i>場所（空間管理者・施設）</button>
-        <button type="button" data-r="1" aria-pressed="false"><i style="background:var(--fund)"></i>場所・事業費（自治体）</button>
-        <button type="button" data-r="2" aria-pressed="false"><i style="background:var(--res)"></i>研究（大学・研究機関）</button>
-        <button type="button" data-r="3" aria-pressed="false"><i style="background:var(--fund)"></i>事業費・技術（企業）</button>
-      </div>
-      <pre id="tpl" aria-live="polite"></pre>
-      <div class="row">
-        <button class="btn ghost" id="copyTpl" type="button">相談文をコピー</button>
-        <a class="btn" href="https://academimic.com/info-1" target="_blank" rel="noopener">問い合わせフォームへ ↗</a>
-      </div>
-      <p class="note">コピーした相談文を、問い合わせフォーム（academimic.com/info-1）に貼り付けてご利用ください。</p>
+    <div class="ctabox r" style="--d:.35">
+      <a class="btn big" href="https://academimic.com/info-1" target="_blank" rel="noopener">問い合わせフォームを開く ↗</a>
+      <p class="note">academimic.com の問い合わせフォームが、新しいタブで開きます。</p>
     </div>
   </div>
 </section>
@@ -491,13 +533,15 @@ function fit(){secs.forEach(s=>{const inn=s.querySelector('.inner');if(!inn)retu
 
 /* ---------- screens: entering one replays its animation and tells the world what to show ---------- */
 let cur=-1;
-function enter(a){const s=secs[a];s.classList.remove('on');void s.offsetWidth;s.classList.add('on');setWorld(s.dataset.world||'off')}
+function enter(a){const s=secs[a];s.classList.add('on');setWorld(s.dataset.world||'off')}
 const rail=document.getElementById('rail'),railBtns=[];
 secs.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.innerHTML=`<span>${s.dataset.label}</span><i></i>`;b.setAttribute('aria-label',s.dataset.label+'へ移動');b.addEventListener('click',()=>{toSec(i);b.blur()});rail.appendChild(b);railBtns.push(b)});
 const prog=document.getElementById('progress');
 function track(){
   const y=scrollY+innerHeight*.45;let a=0;
   for(let i=0;i<secs.length;i++){if(topOf(secs[i])<=y)a=i;else break}
+  /* a screen is reset only once it has fully left the window, so its words never flash while scrolling */
+  const vh=innerHeight;secs.forEach((s,i)=>{if(i!==a&&s.classList.contains('on')){const r=s.getBoundingClientRect();if(r.bottom<=1||r.top>=vh-1)s.classList.remove('on')}});
   if(a!==cur){enter(a);cur=a}
   railBtns.forEach((b,i)=>b.classList.toggle('cur',i===a));
   document.body.classList.toggle('at0',a===0);
@@ -554,42 +598,49 @@ function show(key){
   fit();
 }
 pcs.forEach(b=>{b.addEventListener('click',()=>show(b.dataset.p));b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(b.dataset.p)}})});
-panel.innerHTML='<p class="eyebrow" style="margin:0">ピースを押してください</p><h3>どのピースが、<br>誰のものか。</h3><p class="lead">色のついた2つ（体験の表現・都市実装）は私たちが担います。点線の3つ（場所・研究・事業費）が、パートナーに埋めてほしいピースです。</p>';
+panel.innerHTML='<p class="eyebrow" style="margin:0">ピースを押してください</p><h3>どのピースが、<br>誰のものか。</h3><p class="lead">色のついた2つ（体験の表現・都市実装）は私たちが担います。淡い色の3つ（場所・研究・事業費）が、パートナーに埋めてほしいピースです。</p>';
 
-/* ---------- consult templates ---------- */
-const TPL=[
-'未活用スペースでの実証を相談したいです。\n場所：［施設名・候補区画］\n目的：［滞在・回遊・施設の魅力づくり 等］\n時期：［検討中でも可］',
-'地域の研究を、市民が関われる場にする実証を相談したいです。\n地域・候補場所：［エリア・施設名］\n目的：［市民参加・産学連携・まちの魅力づくり 等］\n時期：［検討中でも可］',
-'研究を街で体験できる形にする実証を相談したいです。\n研究テーマ：［分野・研究室名］\n目的：［社会発信・市民の反応の取得・連携先の開拓 等］\n時期：［検討中でも可］',
-'協賛・技術提供・共同事業について相談したいです。\n提供できるもの：［資金・技術・展開先 等］\n目的：［技術の体感機会・ブランド体験・新規事業 等］\n時期：［検討中でも可］'];
-const tpl=document.getElementById('tpl'),roles=[...document.querySelectorAll('#roles button')];
-function setRole(r){roles.forEach(b=>b.setAttribute('aria-pressed',b.dataset.r==r));tpl.textContent=TPL[r]}
-roles.forEach(b=>b.addEventListener('click',()=>setRole(b.dataset.r)));setRole(0);
-document.getElementById('copyTpl').addEventListener('click',async e=>{const b=e.currentTarget;
-  try{await navigator.clipboard.writeText(tpl.textContent);b.textContent='コピーしました'}catch(_){const r=document.createRange();r.selectNodeContents(tpl);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='選択しました。コピーしてください'}
-  setTimeout(()=>b.textContent='相談文をコピー',2400)});
-
-/* ---------- words become leaves ---------- */
-const layer=document.getElementById('leafLayer'),form=document.getElementById('leafForm'),inp=document.getElementById('leafIn'),tryEl=document.getElementById('tryBox');
-const COLS=['#10b07f','#2f5bff','#8b5cf6','#ff5a3c','#ffb81f'];
-form.addEventListener('submit',e=>{
-  e.preventDefault();const text=(inp.value.trim()||inp.placeholder).slice(0,20);inp.value='';inp.blur();
-  const r=inp.getBoundingClientRect(),chars=[...text],n=chars.length,cxm=innerWidth/2,cym=innerHeight*.42;
-  tryEl.classList.add('playing');clearTimeout(tryEl._t);tryEl._t=setTimeout(()=>tryEl.classList.remove('playing'),6200);
-  chars.forEach((c,i)=>{
-    const sp=document.createElement('span');sp.className='lc';sp.textContent=c;layer.appendChild(sp);
-    const x0=r.left+r.width/2+(i-(n-1)/2)*28,y0=r.top+r.height/2-18;
-    const t=n>1?i/(n-1):.5,ang=t*Math.PI*2,lx=cxm-20+Math.cos(ang)*Math.min(260,70+n*16),ly=cym+Math.sin(ang)*Math.min(110,34+n*6);
-    sp.animate([{transform:`translate(${x0}px,${y0}px)`,opacity:0},{transform:`translate(${x0}px,${y0-24}px)`,opacity:1,offset:.15},{transform:`translate(${lx}px,${ly}px) rotate(${(Math.random()-.5)*40}deg)`,opacity:1}],{duration:1800+i*60,easing:'cubic-bezier(.34,1.56,.64,1)',fill:'forwards'}).onfinish=()=>{
-      sp.animate([{opacity:1,transform:`translate(${lx}px,${ly}px)`},{opacity:0,transform:`translate(${lx}px,${ly}px) scale(.3)`}],{duration:400,fill:'forwards'}).onfinish=()=>sp.remove();
-      const col=COLS[i%COLS.length],lf=document.createElement('div');lf.className='lf';
-      lf.innerHTML=`<svg viewBox="0 0 26 12" width="46" height="22"><path d="M1 6C6 -1 19 -1 25 6C19 13 6 13 1 6Z" fill="${col}"/><path d="M2 6H24" stroke="rgba(0,0,0,.25)" stroke-width=".8"/></svg>`;layer.appendChild(lf);
-      const drift=(Math.random()-.5)*innerWidth*.5,fall=innerHeight+80-ly,rot=(Math.random()-.5)*720,dur=5000+Math.random()*2200,kf=[];
-      for(let s=0;s<=10;s++){const q=s/10;kf.push({transform:`translate(${lx+drift*q+Math.sin(q*9+i)*40}px,${ly+fall*q*q*.9+fall*q*.1}px) rotate(${rot*q}deg) scaleX(${Math.cos(q*12+i)})`,opacity:s===0?0:(q>.85?(1-q)/.15:1)})}
-      lf.animate(kf,{duration:dur,easing:'linear',fill:'forwards'}).onfinish=()=>lf.remove();
-    };
-  });
-});
+/* ---------- a letter on a leaf: choose words, they are engraved, the leaf is rolled like an otoshibumi, cut, and falls ---------- */
+const FEEL={'ありがとう':['いつもそばにいてくれて、','ありがとう。'],'がんばれ':['その一歩を、','ちゃんと見ているよ。'],'また会おう':['次の季節に、','またここで会おう。'],'だいじょうぶ':['雨のあとには、','きっと晴れるから。']};
+const NS='http://www.w3.org/2000/svg';
+const toChips=document.getElementById('toChips'),feelChips=document.getElementById('feelChips'),leafBtn=document.getElementById('makeLeaf');
+const lfBody=document.getElementById('lfBody'),lfRoll=document.getElementById('lfRoll'),lfFall=document.getElementById('lfFall'),lfText=document.getElementById('lfText'),lfCut=document.getElementById('lfCut'),lfNote=document.getElementById('lfNote');
+let busy=false,done=false;
+const wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+const D=ms=>reduce?1:ms;
+[toChips,feelChips].forEach(grp=>grp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||busy)return;grp.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(done)resetLeaf(true)}));
+const chosen=grp=>grp.querySelector('[aria-pressed=true]').textContent;
+function resetLeaf(regrow){
+  [lfBody,lfRoll,lfFall,lfCut,lfNote].forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
+  lfText.textContent='';lfRoll.style.opacity=0;lfNote.style.opacity=0;done=false;leafBtn.textContent='葉の手紙にする';
+  if(regrow)lfBody.animate([{transform:'rotate(7deg) scale(.2)',opacity:0},{transform:'rotate(7deg) scale(1)',opacity:1}],{duration:D(900),easing:'cubic-bezier(.22,.8,.2,1)'});
+}
+async function play(){
+  if(busy)return;busy=true;leafBtn.disabled=true;resetLeaf(false);
+  const lines=[chosen(toChips),...FEEL[chosen(feelChips)]];
+  const els=lines.map((ln,i)=>{const t=document.createElementNS(NS,'text');t.setAttribute('x','158');t.setAttribute('y',String(-26+i*27));t.setAttribute('text-anchor','middle');if(i===0)t.setAttribute('class','to');lfText.appendChild(t);return t});
+  for(let i=0;i<lines.length;i++)for(const ch of lines[i]){els[i].textContent+=ch;await wait(60)}
+  await wait(1100);
+  const R='rotate(7deg)';
+  /* fold along the midrib */
+  await lfBody.animate([{transform:R+' scaleY(1)'},{transform:R+' scaleY(.12)'}],{duration:D(900),easing:'cubic-bezier(.6,0,.3,1)',fill:'forwards'}).finished;
+  /* roll up from the tip toward the stem */
+  lfRoll.animate([{opacity:0,transform:R+' translateX(230px) scale(.55)'},{opacity:1,transform:R+' translateX(0) scale(1)'}],{duration:D(1200),easing:'cubic-bezier(.5,0,.25,1)',fill:'forwards'});
+  await lfBody.animate([{transform:R+' scaleY(.12) scaleX(1)',opacity:1},{transform:R+' scaleY(.12) scaleX(.22)',opacity:0}],{duration:D(1200),easing:'cubic-bezier(.5,0,.25,1)',fill:'forwards'}).finished;
+  await wait(350);
+  /* snip */
+  lfCut.animate([{opacity:0,transform:'scale(.3) rotate(0)'},{opacity:1,transform:'scale(1.2) rotate(20deg)',offset:.35},{opacity:0,transform:'scale(1.5) rotate(30deg)'}],{duration:D(600),fill:'forwards'});
+  await wait(180);
+  /* fall to the ground */
+  await lfFall.animate([
+    {transform:'translate(0,0) rotate(0deg)',easing:'cubic-bezier(.5,0,.9,.55)'},
+    {transform:'translate(-34px,314px) rotate(-150deg)',offset:.8,easing:'ease-out'},
+    {transform:'translate(-40px,302px) rotate(-162deg)',offset:.9,easing:'ease-in'},
+    {transform:'translate(-44px,314px) rotate(-170deg)'}],{duration:D(1700),fill:'forwards'}).finished;
+  lfNote.animate([{opacity:0},{opacity:1}],{duration:D(900),fill:'forwards'});
+  leafBtn.textContent='もう一度';leafBtn.disabled=false;busy=false;done=true;
+}
+leafBtn.addEventListener('click',()=>{if(done){resetLeaf(true);return}play()});
 
 /* ---------- the world ----------
    street : a real street. Between the buildings, one empty lot. People hurry past it.
@@ -601,7 +652,7 @@ form.addEventListener('submit',e=>{
    invite : the network, faint, with one empty gap still waiting. */
 const cv=document.getElementById('world'),g=cv.getContext('2d');
 const COL=['255,90,60','47,91,255','255,184,31','16,176,127','139,92,246'];
-let w=0,h=0,G=0,dpr=1,sx=0,gw=0,lx=0,lw=0,dome={x:0,y:0,r:0};
+let w=0,h=0,G=0,dpr=1,sx=0,gw=0,lx=0,lw=0,textB=0,treeH=0,dome={x:0,y:0,r:0};
 let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
 const mk=()=>document.createElement('canvas');
 const street=mk(),mapc=mk();
@@ -672,6 +723,9 @@ function uni(c){
 function layoutWorld(){
   dpr=Math.min(2,devicePixelRatio||1);w=innerWidth;h=innerHeight;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);g.setTransform(dpr,0,0,dpr,0,0);
   const narrow=w<700;G=h*.86;sx=w*(narrow?.34:.4);gw=w*(narrow?.26:.15);lx=w*(narrow?.79:.8);lw=Math.max(120,w*(narrow?.32:.17));
+  /* keep every drawing below the words: measure where the text of the street screens ends */
+  let tb=0;document.querySelectorAll('.ws .inner').forEach(n=>{const sc=n.closest('.sec');tb=Math.max(tb,n.getBoundingClientRect().bottom-sc.getBoundingClientRect().top)});textB=Math.min(G-h*.18,tb+h*.025);
+  lw=Math.max(70,Math.min(lw,(G-h*.238-textB)/.56));
   dome.r=lw*.36;dome.x=lx;dome.y=G-h*.2-h*.02-lw*.2-h*.018;
   drawStreet();buildTree();buildMap();
 }
@@ -679,7 +733,7 @@ function layoutWorld(){
 /* ---- the tree of light (research + art) ---- */
 let branches=[],leaves=[];
 function buildTree(){
-  branches=[];leaves=[];seed=5;const H=Math.min(h*.32,gw*1.9);
+  branches=[];leaves=[];seed=5;const H=Math.min(h*.32,gw*1.9,(G-textB)*.88);treeH=H;
   (function grow(x,y,ang,len,dep,t0){const x2=x+Math.cos(ang)*len,y2=y+Math.sin(ang)*len;branches.push({x,y,x2,y2,dep,t0,t1:t0+.16});
     if(dep<5){const k=dep<1?2:(rnd()<.6?2:3);for(let i=0;i<k;i++)grow(x2,y2,ang+(i-(k-1)/2)*(.5+rnd()*.18)+(rnd()-.5)*.12+(-Math.PI/2-ang)*.18,len*(.7+rnd()*.08),dep+1,t0+.15)}
     else for(let i=0;i<12;i++){leaves.push({x:x2+(rnd()-.5)*H*.2,y:y2+(rnd()-.5)*H*.15,rot:rnd()*6.3,c:COL[Math.floor(rnd()*5)],s:.7+rnd()*.6,ph:rnd()*6})}
@@ -717,8 +771,8 @@ function buildMap(){
     const x0=roads.xs[i]+rw/2,y0=roads.ys[j]+rw/2,x1=roads.xs[i+1]-rw/2,y1=roads.ys[j+1]-rw/2;c.fillStyle='#eceff4';rr(c,x0,y0,x1-x0,y1-y0,6);c.fill();
     const n=2+Math.floor(rnd()*4);for(let k=0;k<n;k++){const bw=(x1-x0)*(.2+rnd()*.35),bh=(y1-y0)*(.2+rnd()*.35);c.fillStyle=rnd()<.15?'#dbe8dc':'#e1e5ec';rr(c,x0+4+rnd()*(x1-x0-bw-8),y0+4+rnd()*(y1-y0-bh-8),bw,bh,3);c.fill()}
   }
-  c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=1;c.setLineDash([6,8]);
-  roads.xs.forEach(x=>{c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()});roads.ys.forEach(y=>{c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()});c.setLineDash([]);
+  c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=1;
+  roads.xs.forEach(x=>{c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()});roads.ys.forEach(y=>{c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()});
   // gaps that will light up, spread across the lower two-thirds
   nodes=[];const pick=[[.3,.64],[.55,.74],[.76,.6],[.14,.84],[.88,.82],[.44,.84],[.64,.58],[.2,.6]];
   pick.forEach(([fx,fy],k)=>{const xi=roads.xs.reduce((b,x)=>Math.abs(x-fx*w)<Math.abs(b-fx*w)?x:b),yi=roads.ys.reduce((b,y)=>Math.abs(y-fy*h)<Math.abs(b-fy*h)?y:b);nodes.push({x:xi,y:yi,k,c:COL[k%5]})});
@@ -751,10 +805,7 @@ function frame(now){
 function drawStreetWorld(now,dt){
   const A=S.st;g.globalAlpha=A;g.drawImage(street,0,0,w,h);g.globalAlpha=1;
   const fill=S.fill,grow=clamp(fill*1.7),bloom=clamp((fill-.25)/.75);
-  /* the empty lot: the outline of a building that is not there */
-  const ghost=A*(1-bloom)*(.4+.6*S.spot);
-  if(ghost>.01){g.setLineDash([5,6]);g.strokeStyle=rgba('255,90,60',.55*ghost);g.lineWidth=1.2;g.strokeRect(sx-gw/2+6,G-h*.24,gw-12,h*.24-2);g.setLineDash([])}
-  if(S.spot>.01){const sp=S.spot*A,cg=g.createLinearGradient(0,G-h*.36,0,G);cg.addColorStop(0,rgba('255,214,140',0));cg.addColorStop(1,rgba('255,214,140',.22*sp*(1-bloom*.6)));g.fillStyle=cg;g.beginPath();g.moveTo(sx-gw*.08,G-h*.36);g.lineTo(sx+gw*.08,G-h*.36);g.lineTo(sx+gw*.55,G);g.lineTo(sx-gw*.55,G);g.closePath();g.fill()}
+  if(S.spot>.01){const sp=S.spot*A,sT=G-Math.min(h*.36,G-textB),cg=g.createLinearGradient(0,sT,0,G);cg.addColorStop(0,rgba('255,214,140',0));cg.addColorStop(1,rgba('255,214,140',.22*sp*(1-bloom*.6)));g.fillStyle=cg;g.beginPath();g.moveTo(sx-gw*.08,sT);g.lineTo(sx+gw*.08,sT);g.lineTo(sx+gw*.55,G);g.lineTo(sx-gw*.55,G);g.closePath();g.fill()}
   /* the dome and what it keeps inside */
   const L=S.lab*A,R=dome.r,dx=dome.x,dy=dome.y;
   g.save();g.beginPath();g.arc(dx,dy,R,Math.PI,0);g.closePath();g.clip();
@@ -775,7 +826,7 @@ function drawStreetWorld(now,dt){
   const domeGlow=L*(.4+.6*(mode==='fill'?1-bloom:1));
   if(domeGlow>.02){const og=g.createRadialGradient(dx,dy-R*.4,R*.2,dx,dy-R*.4,R*2.2);og.addColorStop(0,rgba('47,91,255',.12*domeGlow));og.addColorStop(1,rgba('47,91,255',0));g.fillStyle=og;g.beginPath();g.arc(dx,dy-R*.4,R*2.2,0,7);g.fill()}
   /* research streams out and becomes art */
-  if(mode==='fill'&&!reduce&&litCount<leaves.length&&grow>.2){const n=Math.ceil(dt*170);for(let k=0;k<n&&litCount+parts.length<leaves.length;k++){const leaf=leaves[litCount+parts.length];parts.push({t:0,dur:1.3+Math.random()*.5,leaf,ox:(Math.random()-.5)*R*.6,cy:h*(.18+Math.random()*.12)})}}
+  if(mode==='fill'&&!reduce&&litCount<leaves.length&&grow>.2){const n=Math.ceil(dt*170);for(let k=0;k<n&&litCount+parts.length<leaves.length;k++){const leaf=leaves[litCount+parts.length];parts.push({t:0,dur:1.3+Math.random()*.5,leaf,ox:(Math.random()-.5)*R*.6,cy:textB+Math.random()*Math.max(10,dome.y-dome.r-textB)})}}
   if(reduce&&mode==='fill')litCount=leaves.length;
   parts=parts.filter(p=>{p.t+=dt/p.dur;const e=ease(Math.min(1,p.t)),x0=dx+p.ox,y0=dy-R*.9,cx=(x0+p.leaf.x)/2,x=(1-e)*(1-e)*x0+2*(1-e)*e*cx+e*e*p.leaf.x,y=(1-e)*(1-e)*y0+2*(1-e)*e*p.cy+e*e*p.leaf.y;
     const mix=clamp((e-.6)/.4),c=mix<.5?'47,91,255':p.leaf.c;g.fillStyle=rgba(c,.9*A);g.beginPath();g.arc(x,y,2.2,0,7);g.fill();
@@ -786,7 +837,7 @@ function drawStreetWorld(now,dt){
   if(grow>.001){
     const tg=grow*1.25;
     for(const b of branches){const k=clamp((tg-b.t0)/(b.t1-b.t0));if(k<=0)continue;g.strokeStyle=rgba('60,62,70',.75*A);g.lineWidth=Math.max(1,(6-b.dep)*1.3*(h/900));g.beginPath();g.moveTo(b.x,b.y);g.lineTo(b.x+(b.x2-b.x)*k,b.y+(b.y2-b.y)*k);g.stroke()}
-    const glow=g.createRadialGradient(sx,G-h*.18,0,sx,G-h*.18,h*.28);glow.addColorStop(0,rgba('255,236,190',.35*bloom*A));glow.addColorStop(1,rgba('255,236,190',0));g.fillStyle=glow;g.beginPath();g.arc(sx,G-h*.18,h*.28,0,7);g.fill();
+    const glow=g.createRadialGradient(sx,G-treeH*.6,0,sx,G-treeH*.6,treeH*.9);glow.addColorStop(0,rgba('255,236,190',.35*bloom*A));glow.addColorStop(1,rgba('255,236,190',0));g.fillStyle=glow;g.beginPath();g.arc(sx,G-treeH*.6,treeH*.9,0,7);g.fill();
     const t=now/1000;
     for(let i=0;i<litCount;i++){const L2=leaves[i],sway=Math.sin(t*1.3+L2.ph)*2;g.save();g.translate(L2.x+sway,L2.y);g.rotate(L2.rot+Math.sin(t+L2.ph)*.2);const s=h*.0042*L2.s;g.fillStyle=rgba(L2.c,.18*A);g.beginPath();g.arc(0,0,s*3.2,0,7);g.fill();g.fillStyle=rgba(L2.c,.9*A);g.beginPath();g.ellipse(0,0,s*1.9,s*.8,0,0,7);g.fill();g.restore()}
     if(bloom>.95&&!reduce&&Math.random()<dt*1.2&&litCount){const L2=leaves[Math.floor(Math.random()*litCount)];falling.push({x:L2.x,y:L2.y,c:L2.c,vx:(Math.random()-.5)*20,t:0,rot:L2.rot})}
@@ -801,7 +852,7 @@ function drawStreetWorld(now,dt){
   }
   const heads=[];for(const p of P){const hd=person(p,p.x*w,A*(.45+.5*p.d),now,!p.moving&&gathering);if(p.arr)heads.push([hd,p])}
   /* threads of light between the tree and the people who stopped */
-  if(heads.length){const t=now/1000,ox=sx,oy=G-h*.2;
+  if(heads.length){const t=now/1000,ox=sx,oy=G-treeH*.55;
     for(const [[hx,hy],p] of heads){const k=clamp((now-p.arr)/900);g.strokeStyle=rgba('47,91,255',.22*k*A);g.lineWidth=.8;g.beginPath();g.moveTo(ox,oy);g.quadraticCurveTo((ox+hx)/2,Math.min(oy,hy)-h*.05,hx,hy-4);g.stroke();
       const f=(t*.5+p.d)%1,qx=(1-f)*(1-f)*ox+2*(1-f)*f*((ox+hx)/2)+f*f*hx,qy=(1-f)*(1-f)*oy+2*(1-f)*f*(Math.min(oy,hy)-h*.05)+f*f*(hy-4);g.fillStyle=rgba('255,214,140',.9*k*A);g.beginPath();g.arc(qx,qy,1.8,0,7);g.fill()}}
 }
@@ -816,9 +867,10 @@ function drawMap(now,dt){
     g.fillStyle=rgba('29,29,31',.5*A);g.beginPath();g.arc(x,y,2,0,7);g.fill()}
   // the network between lit gaps
   for(let k=1;k<nodes.length;k++){const a=nodes[k-1],b=nodes[k],q=Math.min(lit[k-1],lit[k]);if(q<=0)continue;const mx=(a.x+b.x)/2,my=(a.y+b.y)/2-Math.hypot(a.x-b.x,a.y-b.y)*.25;
-    g.strokeStyle=rgba('139,92,246',.5*q*A);g.lineWidth=1.4;g.setLineDash([2,7]);g.lineDashOffset=-now/40;g.beginPath();g.moveTo(a.x,a.y);g.quadraticCurveTo(mx,my,a.x+(b.x-a.x)*1,a.y+(b.y-a.y)*1);g.stroke();g.setLineDash([])}
+    g.strokeStyle=rgba('139,92,246',.22*q*A);g.lineWidth=1.2;g.beginPath();g.moveTo(a.x,a.y);g.quadraticCurveTo(mx,my,b.x,b.y);g.stroke();
+    for(let r=0;r<2;r++){const f=((now/2400)+r/2+k*.17)%1,px=(1-f)*(1-f)*a.x+2*(1-f)*f*mx+f*f*b.x,py=(1-f)*(1-f)*a.y+2*(1-f)*f*my+f*f*b.y,pg=g.createRadialGradient(px,py,0,px,py,9);pg.addColorStop(0,rgba('255,255,255',.95*q*A));pg.addColorStop(.3,rgba('139,92,246',.6*q*A));pg.addColorStop(1,rgba('139,92,246',0));g.fillStyle=pg;g.beginPath();g.arc(px,py,9,0,7);g.fill()}}
   nodes.forEach((n,k)=>{const q=lit[k];const R=Math.min(w,h)*.018;
-    if(q<=0){if(mode==='invite'&&k===nodes.length-1){const pulse=.5+.5*Math.sin(now/400);g.setLineDash([4,5]);g.strokeStyle=rgba('255,90,60',(.5+.5*pulse)*A);g.lineWidth=1.5;g.beginPath();g.arc(n.x,n.y,R*1.6,0,7);g.stroke();g.setLineDash([])}return}
+    if(q<=0){if(mode==='invite'&&k===nodes.length-1){const pulse=.5+.5*Math.sin(now/600),eg=g.createRadialGradient(n.x,n.y,R*.6,n.x,n.y,R*(3+pulse*2));eg.addColorStop(0,rgba('255,90,60',.35*A*(.5+pulse*.5)));eg.addColorStop(1,rgba('255,90,60',0));g.fillStyle=eg;g.beginPath();g.arc(n.x,n.y,R*(3+pulse*2),0,7);g.fill();g.strokeStyle=rgba('255,90,60',(.45+.45*pulse)*A);g.lineWidth=1.5;g.beginPath();g.arc(n.x,n.y,R*(1.2+pulse*.4),0,7);g.stroke()}return}
     const gl=g.createRadialGradient(n.x,n.y,0,n.x,n.y,R*6);gl.addColorStop(0,rgba(n.c,.45*q*A));gl.addColorStop(1,rgba(n.c,0));g.fillStyle=gl;g.beginPath();g.arc(n.x,n.y,R*6,0,7);g.fill();
     g.fillStyle=rgba('255,255,255',q*A);g.beginPath();g.arc(n.x,n.y,R,0,7);g.fill();g.strokeStyle=rgba(n.c,q*A);g.lineWidth=2;g.stroke();
     if(!reduce)for(let r=0;r<2;r++){const f=((now/1800)+r/2+k*.13)%1;g.strokeStyle=rgba(n.c,.4*(1-f)*q*A);g.lineWidth=1;g.beginPath();g.arc(n.x,n.y,R*(1+f*5),0,7);g.stroke()}});
@@ -829,7 +881,7 @@ function drawMap(now,dt){
 /* go */
 secs.forEach(s=>s.querySelectorAll('img').forEach(im=>im.complete||im.addEventListener('load',fit)));
 layoutWorld();addEventListener('resize',layoutWorld);
-fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fit();track()});
+fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fit();layoutWorld();track()});
 track();requestAnimationFrame(frame);
 })();
 
